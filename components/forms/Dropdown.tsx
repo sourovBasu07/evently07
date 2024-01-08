@@ -1,7 +1,9 @@
+"use client";
+
 import { SelectContent } from "@radix-ui/react-select";
 import { Select, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { ICategory } from "@/lib/database/models/category.model";
-import { startTransition, useEffect, useState } from "react";
+import { useTransition, useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,7 +28,9 @@ type DropdownProps = {
 
 const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [newCategory, setNewCategory] = useState<string>("");
+  const [newCategory, setNewCategory] = useState("");
+
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     const getCatergories = async () => {
@@ -39,11 +43,11 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   }, []);
 
   const handleAddCategory = async () => {
-    const category = await createCategory({
+    createCategory({
       categoryName: newCategory.trim(),
+    }).then((category) => {
+      setCategories((prev) => [...prev, category]);
     });
-
-    setCategories((prev) => [...prev, category]);
   };
 
   return (
