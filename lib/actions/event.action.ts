@@ -130,8 +130,6 @@ export async function getAllEvents({
       .skip(0)
       .limit(limit);
 
-    console.log(eventsQuery);
-
     const events = await populateEvent(eventsQuery);
 
     const eventsCount = await Event.countDocuments(conditions);

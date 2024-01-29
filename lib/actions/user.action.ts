@@ -7,7 +7,6 @@ import { handleError } from "../utils";
 import Event from "../database/models/event.model";
 import { revalidatePath } from "next/cache";
 import Order from "../database/models/order.model";
-import { log } from "console";
 
 export const createUser = async (user: CreateUserParams) => {
   console.log(user);
@@ -15,8 +14,6 @@ export const createUser = async (user: CreateUserParams) => {
     await connectToDatabase();
 
     const newUser = await User.create(user);
-
-    console.log(newUser);
 
     return JSON.parse(JSON.stringify(newUser));
   } catch (error) {
@@ -47,8 +44,6 @@ export const deleteUser = async (clerkId: string) => {
     await connectToDatabase();
 
     const userDelete = await User.findOne({ clerkId });
-
-    console.log(userDelete);
 
     if (!userDelete) {
       throw new Error("User not found");
