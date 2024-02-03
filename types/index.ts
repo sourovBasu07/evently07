@@ -97,3 +97,8 @@ export type CreateOrderParams = {
   totalAmount: string;
   createdAt: Date;
 };
+
+export type RemoveUrlQueryParams = {
+  params: string;
+  keysToRemove: string[];
+};

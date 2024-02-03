@@ -1,15 +1,22 @@
+import CategoryFilter from "@/components/shared/CategoryFilter";
 import Collection from "@/components/shared/Collection";
+import Search from "@/components/shared/Search";
 import { Button } from "@/components/ui/button";
 import { getAllEvents } from "@/lib/actions/event.action";
+import { SearchParamsProps } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 
-const Home = async () => {
+const Home = async ({ searchParams }: SearchParamsProps) => {
+  const page = Number(searchParams?.page) || 1;
+  const searchText = (searchParams?.query as string) || "";
+  const category = (searchParams?.category as string) || "";
+
   const events = await getAllEvents({
-    query: "",
-    category: "",
-    page: 1,
-    limit: 6,
+    query: searchText,
+    category,
+    page,
+    limit: 3,
   });
 
   return (
@@ -45,7 +52,8 @@ const Home = async () => {
         </h2>
 
         <div className="flex flex-col md:flex-row w-full gap-5">
-          Search CategoryFilter
+          <Search />
+          <CategoryFilter />
         </div>
 
         <Collection
@@ -54,7 +62,7 @@ const Home = async () => {
           emptyStateSubText="Come back later"
           collectionType="All_Events"
           limit={6}
-          page={1}
+          page={page}
           totalPages={events?.totalPages}
         />
       </section>

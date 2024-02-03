@@ -28,7 +28,9 @@ export async function getOrdersByUser({
 
     const conditions = { buyer: userId };
 
-    const ordersDistincts = await Order.distinct("event._id", conditions);
+    const ordersDistincts = await Order.distinct("event", conditions);
+
+    console.log(ordersDistincts);
 
     const orders = await Order.find({ event: { $in: ordersDistincts } })
       .sort({ createdAt: "desc" })
@@ -97,7 +99,7 @@ export async function getOrdersByEvent({
           eventTitle: "$event.title",
           eventId: "$event._id",
           buyer: {
-            $concat: ["$buyer.firstName", " ", "buyer.lastname"],
+            $concat: ["$buyer.firstName", " ", "$buyer.lastName"],
           },
         },
       },
@@ -111,11 +113,14 @@ export async function getOrdersByEvent({
       },
     ]);
 
+    console.log(orders);
+
     return JSON.parse(JSON.stringify(orders));
   } catch (error) {
     handleError(error);
   }
 }
+
 export async function checkoutOrder(order: CheckoutOrderParams) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 

@@ -113,6 +113,10 @@ export async function getEventById(eventId: string) {
   }
 }
 
+const getCategoryByName = async (name: string) => {
+  return Category.findOne({ name: { $regex: name, $options: "i" } });
+};
+
 export async function getAllEvents({
   query,
   limit,
@@ -123,11 +127,25 @@ export async function getAllEvents({
   try {
     await connectToDatabase();
 
-    const conditions = {};
+    const titlesCondition = query
+      ? { title: { $regex: query, $options: "i" } }
+      : {};
+    const categoryCondition = category
+      ? await getCategoryByName(category)
+      : null;
+
+    const conditions = {
+      $and: [
+        titlesCondition,
+        categoryCondition ? { category: categoryCondition._id } : {},
+      ],
+    };
+
+    const skipAmount = (Number(page) - 1) * limit;
 
     const eventsQuery = Event.find(conditions)
       .sort({ createdAt: "desc" })
-      .skip(0)
+      .skip(skipAmount)
       .limit(limit);
 
     const events = await populateEvent(eventsQuery);
